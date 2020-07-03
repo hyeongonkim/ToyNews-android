@@ -5,56 +5,32 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.simonkim.toynews.MainActivity
 import com.simonkim.toynews.R
+import com.simonkim.toynews.adapter.Article
+import com.simonkim.toynews.adapter.ArticleRecyclerViewAdapter
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [ArticleFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class ArticleFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    var articleList = arrayListOf<Article>()
+    private lateinit var recyclerView: RecyclerView
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?): View? {
+        val rootView = inflater.inflate(R.layout.fragment_article, container, false)
+
+        // TODO(샘플데이터이니 추후 지울 것)
+        articleList.add(Article("https://www.businesswire.com/news/home/20200702005632/en/Northern-Data-announces-new-Block.one-backed-customer", "http://www.businesswire.com/images/bwlogo_square.png", "Business Wire", "Northern Data announces new Block.one backed customer", "FRANKFURT AM MAIN, Germany--(BUSINESS WIRE)--Northern Data AG (XETRA: NB2, ISIN: DE000A0SMU87), one of the world's largest providers of high-performance computing (HPC) solutions, continues to enjoy a very successful 2020 with the signing of 180 MW of capacit…"))
+
+        recyclerView = rootView.findViewById(R.id.articleRecyclerView) as RecyclerView
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.adapter = ArticleRecyclerViewAdapter(requireContext(), articleList)
+
+        return rootView
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_article, container, false)
-    }
-
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ArticleFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ArticleFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
     }
 }
