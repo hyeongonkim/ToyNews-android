@@ -5,4 +5,6 @@
     <string name="news">News</string>
     <string name="scrap">Scrap</string>
     <string name="search">Search</string>
+    <string name="newsimg">NewsImg</string>
+    <string name="scrap_article">Scrap Article</string>
 </resources>

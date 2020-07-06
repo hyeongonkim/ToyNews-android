@@ -1,36 +1,90 @@
 package com.simonkim.toynews.fragments
 
 import android.os.Bundle
+import android.util.Log
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.simonkim.toynews.MainActivity
+import com.simonkim.toynews.ArticleReadActivity
 import com.simonkim.toynews.R
-import com.simonkim.toynews.adapter.Article
 import com.simonkim.toynews.adapter.ArticleRecyclerViewAdapter
+import com.simonkim.toynews.data.*
+import org.jetbrains.anko.support.v4.startActivity
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class ArticleFragment : Fragment() {
-    var articleList = arrayListOf<Article>()
     private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: ArticleRecyclerViewAdapter
+    val BASEURL = "https://newsapi.org/"
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_article, container, false)
 
-        // TODO(샘플데이터이니 추후 지울 것)
-        articleList.add(Article("https://www.businesswire.com/news/home/20200702005632/en/Northern-Data-announces-new-Block.one-backed-customer", "http://www.businesswire.com/images/bwlogo_square.png", "Business Wire", "Northern Data announces new Block.one backed customer", "FRANKFURT AM MAIN, Germany--(BUSINESS WIRE)--Northern Data AG (XETRA: NB2, ISIN: DE000A0SMU87), one of the world's largest providers of high-performance computing (HPC) solutions, continues to enjoy a very successful 2020 with the signing of 180 MW of capacit…"))
-
         recyclerView = rootView.findViewById(R.id.articleRecyclerView) as RecyclerView
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        recyclerView.adapter = ArticleRecyclerViewAdapter(requireContext(), articleList)
+
+        adapter = ArticleRecyclerViewAdapter(requireContext(), emptyList())
+        recyclerView.adapter = adapter
+
+        adapter.setItemClickListener( object : ArticleRecyclerViewAdapter.ItemClickListener {
+            override fun onClick(view: View, position: Int) {
+                startActivity<ArticleReadActivity>(
+                    "url" to adapter.articleList[position].url,
+                    "urlToImage" to adapter.articleList[position].urlToImage,
+                    "title" to adapter.articleList[position].title,
+                    "description" to adapter.articleList[position].description)
+            }
+        })
+
+        getHeadlines()
+
+        setHasOptionsMenu(true)
 
         return rootView
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.search_view, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.action_search -> {
+                return super.onOptionsItemSelected(item)
+            }
+        }
+        return true
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+    }
+
+    fun getHeadlines() {
+        val retrofit = Retrofit.Builder()
+            .baseUrl(BASEURL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+        val articleRequest = retrofit.create(ArticleRequest::class.java)
+        val call = articleRequest.getHeadlines("us", NewsapiKey.key)
+        call.enqueue(object : Callback<ArticleResponse> {
+            override fun onResponse(
+                call: Call<ArticleResponse>, response: Response<ArticleResponse>) {
+                if(response.isSuccessful) {
+                    adapter.articleList = response.body()?.articles!!
+                    adapter.notifyDataSetChanged()
+                }
+            }
+            override fun onFailure(call: Call<ArticleResponse>, t: Throwable) {
+                t.printStackTrace()
+            }
+        })
     }
 }

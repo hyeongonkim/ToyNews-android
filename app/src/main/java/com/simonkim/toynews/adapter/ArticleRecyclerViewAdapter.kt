@@ -2,18 +2,27 @@ package com.simonkim.toynews.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.simonkim.toynews.R
-import com.simonkim.toynews.module.URLToImage
-import java.net.URL
+import com.simonkim.toynews.data.Article
 
-class ArticleRecyclerViewAdapter(val context: Context, val articleList: ArrayList<Article>) : RecyclerView.Adapter<ArticleRecyclerViewAdapter.articleHolder>() {
+class ArticleRecyclerViewAdapter(val context: Context, var articleList: List<Article>) : RecyclerView.Adapter<ArticleRecyclerViewAdapter.articleHolder>() {
+
+    interface ItemClickListener {
+        fun onClick(view: View, position: Int)
+    }
+
+    private lateinit var itemClickListener: ItemClickListener
+
+    fun setItemClickListener(itemClickListener: ItemClickListener) {
+        this.itemClickListener = itemClickListener
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): articleHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.recyclerview_article, parent, false)
@@ -26,20 +35,23 @@ class ArticleRecyclerViewAdapter(val context: Context, val articleList: ArrayLis
 
     override fun onBindViewHolder(holder: articleHolder, position: Int) {
         holder.bind(articleList[position], context)
+        holder.itemView.setOnClickListener {
+            itemClickListener.onClick(it, position)
+        }
     }
 
     inner class articleHolder(itemView: View?) : RecyclerView.ViewHolder(itemView!!) {
-        var articleImage = itemView?.findViewById<ImageView>(R.id.articleImage)
-        var articleTitle = itemView?.findViewById<TextView>(R.id.articleTitle)
-        var articleSource = itemView?.findViewById<TextView>(R.id.articleSource)
-        var articleContent = itemView?.findViewById<TextView>(R.id.articleContent)
+        var articleImage = itemView!!.findViewById<ImageView>(R.id.articleImage)
+        var articleTitle = itemView!!.findViewById<TextView>(R.id.articleTitle)
+        var articleContent = itemView!!.findViewById<TextView>(R.id.articleContent)
 
         @SuppressLint("SetTextI18n")
         fun bind (article: Article, context: Context) {
-//          // TODO(URL에서 이미지받아와서 뿌려주기)
-            articleTitle?.text = article.title
-            articleSource?.text = "Source by " + article.source
-            articleContent?.text = article.description
+            Glide.with(context)
+                .load(article.urlToImage)
+                .into(articleImage)
+            articleTitle.text = article.title
+            articleContent.text = article.description
         }
     }
 }

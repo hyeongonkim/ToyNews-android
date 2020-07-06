@@ -2,7 +2,6 @@ package com.simonkim.toynews
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -18,20 +17,8 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         val bottomNavigationView = findViewById<View>(R.id.navigationView) as BottomNavigationView
         bottomNavigationView.setOnNavigationItemSelectedListener(this)
         supportFragmentManager.beginTransaction().replace(R.id.frameLayout, ArticleFragment()).commit()
-    }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.search_view, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
-            R.id.action_search -> {
-                return super.onOptionsItemSelected(item)
-            }
-        }
-        return true
+        setTitle("Today's News")
     }
 
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
