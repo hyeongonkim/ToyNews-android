@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         bottomNavigationView.setOnNavigationItemSelectedListener(this)
         supportFragmentManager.beginTransaction().replace(R.id.frameLayout, ArticleFragment()).commit()
 
-        setTitle("Today's News")
+        setTitle("News Article")
     }
 
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {

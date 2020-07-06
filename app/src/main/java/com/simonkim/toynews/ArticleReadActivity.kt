@@ -30,5 +30,7 @@ class ArticleReadActivity : AppCompatActivity() {
         fab.setOnClickListener { view ->
             Toast.makeText(this, "뉴스 기사를 스크랩했어요!", Toast.LENGTH_SHORT).show()
         }
+
+        setTitle("News Article")
     }
 }
