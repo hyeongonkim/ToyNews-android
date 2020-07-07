@@ -1,7 +1,6 @@
 package com.simonkim.toynews.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
@@ -30,18 +29,15 @@ class ArticleFragment : Fragment() {
         recyclerView = rootView.findViewById(R.id.articleRecyclerView) as RecyclerView
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        adapter = ArticleRecyclerViewAdapter(requireContext(), emptyList())
-        recyclerView.adapter = adapter
-
-        adapter.setItemClickListener( object : ArticleRecyclerViewAdapter.ItemClickListener {
-            override fun onClick(view: View, position: Int) {
+        adapter = ArticleRecyclerViewAdapter(requireContext(), emptyList(),
+            { article ->
                 startActivity<ArticleReadActivity>(
-                    "url" to adapter.articleList[position].url,
-                    "urlToImage" to adapter.articleList[position].urlToImage,
-                    "title" to adapter.articleList[position].title,
-                    "description" to adapter.articleList[position].description)
-            }
-        })
+                    "url" to article.url,
+                    "urlToImage" to article.urlToImage,
+                    "title" to article.title,
+                    "description" to article.description)
+            }, { article -> true })
+        recyclerView.adapter = adapter
 
         getHeadlines()
 

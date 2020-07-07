@@ -12,17 +12,7 @@ import com.bumptech.glide.Glide
 import com.simonkim.toynews.R
 import com.simonkim.toynews.data.Article
 
-class ArticleRecyclerViewAdapter(val context: Context, var articleList: List<Article>) : RecyclerView.Adapter<ArticleRecyclerViewAdapter.articleHolder>() {
-
-    interface ItemClickListener {
-        fun onClick(view: View, position: Int)
-    }
-
-    private lateinit var itemClickListener: ItemClickListener
-
-    fun setItemClickListener(itemClickListener: ItemClickListener) {
-        this.itemClickListener = itemClickListener
-    }
+class ArticleRecyclerViewAdapter(val context: Context, var articleList: List<Article>, val itemClick: (Article) -> Unit, val itemLongClick: (Article) -> Boolean) : RecyclerView.Adapter<ArticleRecyclerViewAdapter.articleHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): articleHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.recyclerview_article, parent, false)
@@ -35,9 +25,6 @@ class ArticleRecyclerViewAdapter(val context: Context, var articleList: List<Art
 
     override fun onBindViewHolder(holder: articleHolder, position: Int) {
         holder.bind(articleList[position], context)
-        holder.itemView.setOnClickListener {
-            itemClickListener.onClick(it, position)
-        }
     }
 
     inner class articleHolder(itemView: View?) : RecyclerView.ViewHolder(itemView!!) {
@@ -52,6 +39,9 @@ class ArticleRecyclerViewAdapter(val context: Context, var articleList: List<Art
                 .into(articleImage)
             articleTitle.text = article.title
             articleContent.text = article.description
+
+            itemView.setOnClickListener { itemClick(article) }
+            itemView.setOnLongClickListener { itemLongClick(article) }
         }
     }
 }

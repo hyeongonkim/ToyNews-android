@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.simonkim.toynews.realm.RealmScrapObject
@@ -22,9 +23,11 @@ class ArticleReadActivity : AppCompatActivity() {
 
         WebView.setWebContentsDebuggingEnabled(true)
 
-        val settings = articleWebView.settings
-        settings.javaScriptEnabled = true
-        settings.domStorageEnabled = true
+        articleWebView.apply {
+            settings.javaScriptEnabled = true
+            settings.domStorageEnabled = true
+            webViewClient = WebViewClient()
+        }
 
         articleWebView.loadUrl(intent.getStringExtra("url"))
 
