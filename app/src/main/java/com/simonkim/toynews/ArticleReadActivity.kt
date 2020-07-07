@@ -1,15 +1,17 @@
 package com.simonkim.toynews
 
 import android.annotation.SuppressLint
-import android.os.Build
 import android.os.Bundle
 import android.view.View
-import android.view.Window
 import android.webkit.WebView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.simonkim.toynews.realm.RealmScrapObject
+import io.realm.Realm
 
 class ArticleReadActivity : AppCompatActivity() {
+
+    val defaultRealm = Realm.getDefaultInstance()
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,9 +30,25 @@ class ArticleReadActivity : AppCompatActivity() {
 
         val fab: View = findViewById<View>(R.id.scrap_fab)
         fab.setOnClickListener { view ->
-            Toast.makeText(this, "뉴스 기사를 스크랩했어요!", Toast.LENGTH_SHORT).show()
+            scrapArticle()
         }
 
         setTitle("News Article")
+    }
+
+    @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+    fun scrapArticle() {
+        defaultRealm.beginTransaction()
+        val url = intent.getStringExtra("url")
+        if (defaultRealm.where(RealmScrapObject::class.java).equalTo("url", url).findFirst() == null) {
+            val newArticle = defaultRealm.createObject(RealmScrapObject::class.java, url)
+            newArticle.urlToImage = intent.getStringExtra("urlToImage")
+            newArticle.title = intent.getStringExtra("title")
+            newArticle.description = intent.getStringExtra("description")
+            Toast.makeText(this, "뉴스 기사를 스크랩했어요!", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, "이미 스크랩한 기사에요", Toast.LENGTH_SHORT).show()
+        }
+        defaultRealm.commitTransaction()
     }
 }

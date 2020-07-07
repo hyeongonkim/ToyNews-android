@@ -7,6 +7,8 @@ import android.view.View
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.simonkim.toynews.fragments.ArticleFragment
 import com.simonkim.toynews.fragments.ScrappedFragment
+import io.realm.Realm
+import io.realm.RealmConfiguration
 
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
 
@@ -19,6 +21,10 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         supportFragmentManager.beginTransaction().replace(R.id.frameLayout, ArticleFragment()).commit()
 
         setTitle("News Article")
+
+        Realm.init(application)
+        val config: RealmConfiguration = RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build()
+        Realm.setDefaultConfiguration(config)
     }
 
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {

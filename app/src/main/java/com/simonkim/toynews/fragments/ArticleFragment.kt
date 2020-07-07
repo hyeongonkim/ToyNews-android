@@ -86,10 +86,6 @@ class ArticleFragment : Fragment() {
         return true
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-    }
-
     fun getHeadlines() {
         val retrofit = Retrofit.Builder()
             .baseUrl(BASEURL)
